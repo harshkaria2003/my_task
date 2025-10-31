@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
 {
 
     
-$schedule->command('payments:send-reminders')->everyMinute();
+$schedule->command('payments:send-reminders')->everyday();
 
 
 
