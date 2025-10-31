@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
+use clousure;
 use Illuminate\Http\Request;
 
 class RoleMiddleware
@@ -15,7 +15,7 @@ class RoleMiddleware
      * @param  string  $role
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next, string $role)
+    public function handle(Request $request, clousre $next,string $role)
     {
         if (auth()->check() && auth()->user()->role === $role) {
             return $next($request);

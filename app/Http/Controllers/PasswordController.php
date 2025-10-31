@@ -24,7 +24,7 @@ class PasswordController extends Controller
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/'
             ],
         ], [
-            'password.regex' => 'Password must be at least 8 characters and include an uppercase letter, a number, and a special character.',
+            'password.regex' => 'Password must be at least 8 characters and include special character like @A etc',
         ]);
 
         $user = User::where('email', $request->email)->first();
