@@ -11,7 +11,7 @@ use Carbon\Carbon;
 class SendPaymentReminders extends Command
 {
     protected $signature = 'payments:send-reminders';
-    protected $description = 'Send reminder emails to students who did not complete payment within 24 hours';
+    protected $description = 'Send this  emails to students who did not complete payment within 24 hours';
 
     public function handle()
     {
