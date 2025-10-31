@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
 <div class="container-fluid py-4 px-3 px-md-5">
-
     {{-- ===== Dashboard Header ===== --}}
     <div class="row mb-4 align-items-center text-center text-md-start">
         <div class="col-md-6 mb-3 mb-md-0">
@@ -17,7 +13,7 @@
 
     {{-- ===== Summary Cards Row ===== --}}
     <div class="row g-4 mb-5">
-        
+
         {{-- Top 3 Courses --}}
         <div class="col-12 col-md-6 col-lg-4">
             <div class="card shadow-sm border-0 bg-light h-100">
@@ -134,80 +130,67 @@
         </div>
     </div>
 </div>
-@endsection
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-const instructorId = @json(auth()->id());
+document.addEventListener('livewire:load', () => {
+    let topCoursesChart, revenueChart;
 
-if (typeof Echo !== 'undefined' && instructorId) {
-    Echo.private(`instructor.${instructorId}`)
-        .listen('.CourseEnrolled', e => showToast(`${e.student_name} enrolled in ${e.course_title}`));
-}
+    window.addEventListener('renderCharts', (event) => {
+        const { topCourses, revenue } = event.detail;
 
-function showToast(message) {
-    const toast = document.createElement('div');
-    toast.className = 'toast align-items-center text-bg-success border-0 show position-fixed bottom-0 end-0 m-4 z-1055';
-    toast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${message}</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    `;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 6000);
-}
-</script>
+        if (topCoursesChart) topCoursesChart.destroy();
+        if (revenueChart) revenueChart.destroy();
 
-<script>
-const ctxTopCourses = document.getElementById('CoursesChart').getContext('2d');
-new Chart(ctxTopCourses, {
-    type: 'bar',
-    data: {
-        labels: @json($topCourses->pluck('title')),
-        datasets: [{
-            label: 'Enrollments',
-            data: @json($topCourses->pluck('total_enrollments')),
-            backgroundColor: @json($topCoursesColors),
-            borderColor: @json($topCoursesBorderColors),
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw} students` } }
-        },
-        scales: { y: { beginAtZero: true } }
-    }
-});
+        const ctxTop = document.getElementById('CoursesChart').getContext('2d');
+        topCoursesChart = new Chart(ctxTop, {
+            type: 'bar',
+            data: {
+                labels: topCourses.labels,
+                datasets: [{
+                    label: 'Enrollments',
+                    data: topCourses.data,
+                    backgroundColor: topCourses.colors,
+                    borderColor: topCourses.borders,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw} students` } }
+                },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
 
-const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
-new Chart(ctxRevenue, {
-    type: 'bar',
-    data: {
-        labels: @json($revenuePerStudent->pluck('student_name')),
-        datasets: [{
-            label: 'Revenue ($)',
-            data: @json($revenuePerStudent->pluck('total_spent')),
-            backgroundColor: @json($revenueColors),
-            borderColor: @json($revenueBorderColors),
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: ctx => `${ctx.label}: $${ctx.raw}` } }
-        },
-        scales: { y: { beginAtZero: true } }
-    }
+        const ctxRev = document.getElementById('revenueChart').getContext('2d');
+        revenueChart = new Chart(ctxRev, {
+            type: 'bar',
+            data: {
+                labels: revenue.labels,
+                datasets: [{
+                    label: 'Revenue ($)',
+                    data: revenue.data,
+                    backgroundColor: revenue.colors,
+                    borderColor: revenue.borders,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: ctx => `${ctx.label}: $${ctx.raw}` } }
+                },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    });
 });
 </script>
 @endpush

@@ -46,7 +46,7 @@ class PaymentController extends Controller
 
         return redirect($session->url);
     } 
-
+    
     public function success($enrollmentId, Request $request)
 {
     $enrollment = Enrollment::with('course')->findOrFail($enrollmentId);

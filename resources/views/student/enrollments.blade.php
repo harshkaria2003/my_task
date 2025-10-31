@@ -6,11 +6,19 @@
 <div class="container mt-5">
     <h2 class="mb-4 fw-bold">My Enrolled Courses</h2>
 
-   
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-
-
-
+        {{-- Auto-redirect after 5 seconds --}}
+        <script>
+            setTimeout(() => {
+                window.location.href = "{{ route('student.courses.index') }}";
+            }, 5000);
+        </script>
+    @endif
 
     @if($enrollments->count())
         <div class="card shadow-sm border-0 rounded-4">
@@ -30,7 +38,9 @@
                             <tr>
                                 <td class="fw-semibold">{{ $enrollment->course->title }}</td>
                                 <td>{{ $enrollment->course->instructor->name }}</td>
-                                <td class="text-success fw-semibold">${{ number_format($enrollment->course->price, 2) }}</td>
+                                <td class="text-success fw-semibold">
+                                    ${{ number_format($enrollment->course->price, 2) }}
+                                </td>
                                 <td>
                                     @if($enrollment->payment_completed)
                                         <span class="badge bg-success d-flex align-items-center gap-1">
@@ -44,7 +54,8 @@
                                 </td>
                                 <td class="text-center">
                                     @if(!$enrollment->payment_completed)
-                                        <a href="{{ route('student.checkout', $enrollment->id) }}" class="btn btn-sm btn-primary d-flex align-items-center gap-1">
+                                        <a href="{{ route('student.checkout', $enrollment->id) }}" 
+                                           class="btn btn-sm btn-primary d-flex align-items-center gap-1">
                                             <i class="bi bi-credit-card-fill"></i> Pay Now
                                         </a>
                                     @else
@@ -62,29 +73,15 @@
             </div>
         </div>
     @else
-        <div class="alert alert-info text-center fs-5">
+        <div class="alert alert-info text-center fs-5 rounded-3 py-4">
             You have no enrolled courses.
         </div>
     @endif
-     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-@if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
 
-    {{-- Auto-redirect after 3 seconds --}}
-    <script>
-        setTimeout(() => {
-            window.location.href = "{{ route('student.courses.index') }}";
-        }, 5000);
-    </script>
-@endif
-
-<a href="{{ route('student.courses.index') }}" class="btn btn-primary mt-3">
-    Go to Main Courses Page
-</a>
+    <div class="mt-3">
+        <a href="{{ route('student.courses.index') }}" class="btn btn-primary">
+            <i class="bi bi-arrow-left-circle me-2"></i> Go to Main Courses Page
+        </a>
+    </div>
 </div>
 @endsection

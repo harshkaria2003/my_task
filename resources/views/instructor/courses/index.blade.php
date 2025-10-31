@@ -3,30 +3,31 @@
 @section('title', 'My Courses')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div class="d-flex flex-column flex-md-row gap-2 align-items-start align-items-md-center">
-        <h2 class="mb-0 fw-bold">My Courses</h2>
-        
+<div class="container-fluid py-4 px-3 px-md-5">
+
+    {{-- ===== Header Section ===== --}}
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <h2 class="fw-bold text-primary mb-0">My Courses</h2>
+        <a href="{{ route('instructor.courses.create') }}" 
+           class="btn btn-success d-flex align-items-center gap-2">
+            <i class="bi bi-plus-circle fs-5"></i> Create New Course
+        </a>
     </div>
-    <a href="{{ route('instructor.courses.create') }}" class="btn btn-success d-flex align-items-center gap-2">
-        <i class="bi bi-plus-circle fs-5"></i> Create New Course
-    </a>
-</div>
 
-
-    {{-- Flash messages --}}
+    {{-- ===== Flash Messages ===== --}}
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
-            {{ session('success') }}
+        <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
+    {{-- ===== Courses Table ===== --}}
     @if($courses->count())
-        <div class="card shadow-sm rounded-4">
+        <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body p-0">
                 <div class="table-responsive rounded-bottom-4">
-                    <table class="table table-hover table-striped mb-0">
+                    <table class="table table-hover align-middle mb-0">
                         <thead class="table-dark text-uppercase small">
                             <tr>
                                 <th scope="col">Title</th>
@@ -38,28 +39,52 @@
                         <tbody>
                             @foreach($courses as $course)
                                 <tr>
-                                    <td class="fw-semibold">{{ $course->title }}</td>
-                                    <td class="text-end">${{ number_format($course->price, 2) }}</td>
-                                    <td class="text-center">{{ $course->enrollments()->count() }}</td>
-                                    <td class="text-center d-flex justify-content-center gap-2">
-                                        {{-- Edit Button --}}
-                                        <a href="{{ route('instructor.courses.edit', $course) }}" class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1 px-3">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                        </a>
+                                    {{-- Course Title --}}
+                                    <td class="fw-semibold">
+                                        <div class="text-truncate" style="max-width: 220px;">
+                                            {{ $course->title }}
+                                        </div>
+                                    </td>
 
-                                        {{-- View Enrollments Button --}}
-                                        <a href="{{ route('instructor.courses.enrolled_students', $course) }}" class="btn btn-sm btn-info text-white d-inline-flex align-items-center gap-1 px-3">
-                                            <i class="bi bi-people-fill"></i> Enrollments
-                                        </a>
+                                    {{-- Price --}}
+                                    <td class="text-end text-success fw-semibold">
+                                        ${{ number_format($course->price, 2) }}
+                                    </td>
 
-                                        {{-- Delete Button --}}
-                                        <form action="{{ route('instructor.courses.destroy', $course) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this course?');" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger d-inline-flex align-items-center gap-1 px-3">
-                                                <i class="bi bi-trash-fill"></i> Delete
-                                            </button>
-                                        </form>
+                                    {{-- Enrollments Count --}}
+                                    <td class="text-center fw-semibold">
+                                        {{ $course->enrollments()->count() }}
+                                    </td>
+
+                                    {{-- Action Buttons --}}
+                                    <td class="text-center">
+                                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                                            
+                                            {{-- Edit --}}
+                                            <a href="{{ route('instructor.courses.edit', $course) }}" 
+                                               class="btn btn-sm btn-primary d-flex align-items-center gap-1 px-3">
+                                                <i class="bi bi-pencil-square"></i> Edit
+                                            </a>
+
+                                            {{-- Enrollments --}}
+                                            <a href="{{ route('instructor.courses.enrolled_students', $course) }}" 
+                                               class="btn btn-sm btn-info text-white d-flex align-items-center gap-1 px-3">
+                                                <i class="bi bi-people-fill"></i> Enrollments
+                                            </a>
+
+                                            {{-- Delete --}}
+                                            <form action="{{ route('instructor.courses.destroy', $course) }}" 
+                                                  method="POST" 
+                                                  class="d-inline"
+                                                  onsubmit="return confirm('Are you sure you want to delete this course?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" 
+                                                        class="btn btn-sm btn-danger d-flex align-items-center gap-1 px-3">
+                                                    <i class="bi bi-trash-fill"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -68,23 +93,19 @@
                 </div>
             </div>
 
-            <div class="card-footer d-flex justify-content-center rounded-bottom-4">
+            {{-- Pagination --}}
+            <div class="card-footer bg-light d-flex justify-content-center rounded-bottom-4 py-3">
                 {{ $courses->links('pagination::bootstrap-5') }}
             </div>
         </div>
     @else
-        <div class="alert alert-info text-center rounded-3 py-4 fs-5">
+        {{-- Empty State --}}
+        <div class="alert alert-info text-center rounded-3 py-5 shadow-sm fs-5">
+            <i class="bi bi-info-circle-fill me-2"></i>
             You have not created any courses yet.
         </div>
     @endif
 
-
-   
-</div>
-
-
- <a href="{{ route('instructor.dashboard') }}" 
-   class="btn btn-sm btn-info text-white d-inline-flex align-items-center gap-1 px-3">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
-        </a>
-@endsection
+    {{-- ===== Back to Dashboard ===== --}}
+    <div class="text-center mt-4">
+        <a hre
