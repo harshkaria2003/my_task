@@ -9,7 +9,7 @@
     <p>This is a friendly reminder to complete your payment for the course <strong>{{ $course->title }}</strong>.</p>
 
     <p>
-        Please complete the payment within 24 hours to avoid cancellation of your enrollment.
+        please complete payment in 24 hours
     </p>
 
     <p>

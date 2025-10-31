@@ -13,7 +13,7 @@ use App\Http\Controllers\PasswordController;
 
 
 
-Route::get('/home', function () {
+Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
